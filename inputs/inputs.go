@@ -1,7 +1,18 @@
 package inputs
 
-//go:embed
+import "strconv"
 
-func Open(day uint8) {
+func Abs[T ~int](x T) T {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
 
+func MustAtoi(s string) int {
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		panic(err)
+	}
+	return i
 }

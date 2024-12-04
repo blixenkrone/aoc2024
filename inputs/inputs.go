@@ -1,6 +1,8 @@
 package inputs
 
 import (
+	"bufio"
+	"io"
 	"strconv"
 )
 
@@ -17,6 +19,32 @@ func MustAtoi(s string) int {
 		panic(err)
 	}
 	return i
+}
+
+func Scan2DInput[T ~string](in io.Reader) [][]T {
+	sc := bufio.NewScanner(in)
+	sc.Split(bufio.ScanRunes)
+	var out [][]T
+	var row []T
+	for sc.Scan() {
+		str := sc.Text()
+		if str == "\t" || str == " " || str == "" {
+			continue
+		}
+		if str == "\n" {
+			out = append(out, row)
+			row = nil
+			continue
+		}
+		row = append(row, T(str))
+	}
+
+	if err := sc.Err(); err != nil {
+		panic(err)
+	}
+
+	return out
+
 }
 
 // func PrepareInput[T comparable](in io.Reader) T {

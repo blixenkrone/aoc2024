@@ -1,9 +1,9 @@
 package inputs
 
 import (
-	"bufio"
 	"io"
 	"strconv"
+	"strings"
 )
 
 func Abs[T ~int](x T) T {
@@ -21,47 +21,31 @@ func MustAtoi(s string) int {
 	return i
 }
 
-func Scan2DInput[T ~string](in io.Reader) [][]T {
-	sc := bufio.NewScanner(in)
-	sc.Split(bufio.ScanRunes)
-	var out [][]T
-	var row []T
-	for sc.Scan() {
-		str := sc.Text()
-		if str == "\t" || str == " " || str == "" {
-			continue
-		}
-		if str == "\n" {
-			out = append(out, row)
-			row = nil
-			continue
-		}
-		row = append(row, T(str))
+func Reverse[T ~string](in T) T {
+	runes := []rune(in)
+	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
+		runes[i], runes[j] = runes[j], runes[i]
 	}
-
-	if err := sc.Err(); err != nil {
-		panic(err)
-	}
-
-	return out
-
+	return T(runes)
 }
 
-// func PrepareInput[T comparable](in io.Reader) T {
-// 	sc := bufio.NewScanner(in)
-// 	sc.Split(bufio.ScanWords)
-// 	k := 0
-// 	pairs := make([][]int, 2)
-// 	for sc.Scan() {
-// 		out := sc.Text()
-// 		intv := inputs.MustAtoi(out)
-// 		pairs[k] = append(pairs[k], intv)
-
-// 		if k > 0 {
-// 			k--
-// 			continue
-// 		}
-// 		k++
-// 	}
-// 	return pairs
-// }
+func Scan2DInput[T ~string](in io.Reader) [][]T {
+	b, err := io.ReadAll(in)
+	if err != nil {
+		panic(err)
+	}
+	// Split the string by newline characters to separate rows
+	rows := strings.Split(strings.TrimSpace(string(b)), "\n")
+	// Create a 2D slice of runes
+	matrix := make([][]T, len(rows))
+	for i, row := range rows {
+		row = strings.TrimSpace(row)
+		// v := T(row)
+		matrix[i] = make([]T, len(row))
+		for j, ch := range row {
+			matrix[i][j] = T(ch)
+		}
+		// matrix[i] = append(matrix[i], v) // Convert each row to a slice
+	}
+	return matrix
+}

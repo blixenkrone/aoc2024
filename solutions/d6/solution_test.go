@@ -6,7 +6,6 @@ import (
 	_ "embed"
 	"fmt"
 	"io"
-	"strconv"
 	"strings"
 	"testing"
 
@@ -32,35 +31,6 @@ const (
 	right
 	left
 )
-
-/*
-// order matters
-dirs = [
-	-1,0,   up
-	0,1, right
-	-1,0, down
-	0,-1, left
-]
-grid := []string
-px,py := 2,1
-dirIdx = ?
-dir = dirs[dirIdx]
-curr = grid[px, py]
-
-for i := 1; ; ;
-	nx, ny = peekNext(nx, ny, dir, i)
-	if grid[nx][ny] == "#"
-		dir, dirIdx = nextDir(dir, dirIdx)
-		i = 1
-		continue
-	if grid[nx][ny] == "."
-		countField()
-		move(nx, ny, dir)
-		curr = "."
-		continue
-	if grid[nx, ny] == "?"
-		break
-*/
 
 var dirs = [4][2]int{
 	{-1, 0},
@@ -104,37 +74,28 @@ func nextDir(dir direction) direction {
 func solve(r io.Reader) int {
 	grid := prepareInput(r)
 	px, py, dir := initVars(grid)
-	curr := grid[px][py]
-	fmt.Printf("initial curr %d, %d \n", px, py)
-	// dir := [][2]int{}
-
-	// distinctTilesM := make(map[int]struct{})
 
 	var sum int
 	for {
 		nx, ny := peekNext(px, py, dirs[dir][0], dirs[dir][1], 1)
 		fmt.Printf("peeked %d,%d i j \n", nx, ny)
-		curr = grid[nx][ny]
+		curr := grid[nx][ny]
 		if curr == "#" {
 			dir = nextDir(dir)
-			spew.Dump("new dir " + strconv.Itoa(int(dir)))
 			continue
 		}
 		if curr == "." || curr == "X" {
-			// count field
-			// move()
 			if curr == "." {
 				sum++
 			}
 			grid[px][py] = "X"
-			curr = grid[nx][ny]
 			px, py = nx, ny
-			fmt.Printf("new pos %d,%d i j \n", nx, ny)
-			fmt.Println("curr " + curr)
+			// fmt.Printf("new pos %d,%d i j \n", nx, ny)
 			continue
 		}
 		if curr == "?" {
 			fmt.Printf("DONE at %d,%d\n", nx, ny)
+			grid[px][py] = "X"
 			sum += 1
 			printGrid(grid)
 			break

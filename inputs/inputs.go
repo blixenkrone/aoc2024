@@ -29,6 +29,25 @@ func Reverse[T ~string](in T) T {
 	return T(runes)
 }
 
+// Add n padding around a grid with the specified character
+func PadGrid(grid [][]string, padChar string, n int) [][]string {
+	repeatStrArr := func(s string, l int) (out []string) {
+		for i := 0; i < l; i++ {
+			out = append(out, s)
+		}
+		return
+	}
+	// Add padding to inputs pkg
+	for i := range grid {
+		grid[i] = append(grid[i], repeatStrArr(padChar, n)...)
+		grid[i] = append(repeatStrArr(padChar, n), grid[i]...)
+	}
+	lineLen := len(grid[0])
+	grid = append([][]string{repeatStrArr(padChar, lineLen)}, grid...)
+	grid = append(grid, repeatStrArr(padChar, lineLen))
+	return grid
+}
+
 func Scan2DInput[T ~string](in io.Reader) [][]T {
 	b, err := io.ReadAll(in)
 	if err != nil {

@@ -13,30 +13,6 @@ import (
 //go:embed input.txt
 var input []byte
 
-const (
-	padStr = "."
-)
-
-func repeatStrArr(s string, l int) (out []string) {
-	for i := 0; i < l; i++ {
-		out = append(out, s)
-	}
-	return
-}
-
-// Add n padding around a grid with the specified character
-func padGrid(grid [][]string, n int) [][]string {
-	// Add padding to inputs pkg
-	for i := range grid {
-		grid[i] = append(grid[i], repeatStrArr(padStr, n)...)
-		grid[i] = append(repeatStrArr(padStr, n), grid[i]...)
-	}
-	lineLen := len(grid[0])
-	grid = append([][]string{repeatStrArr(padStr, lineLen)}, grid...)
-	grid = append(grid, repeatStrArr(padStr, lineLen))
-	return grid
-}
-
 // Check all 8 directions iteratively
 var directions = [][2]int{
 	{0, 1},   // Right
@@ -51,7 +27,7 @@ var directions = [][2]int{
 
 func solvep1(r io.Reader, match string) int {
 	arr2d := inputs.Scan2DInput[string](r)
-	paddedArr := padGrid(arr2d, len(match))
+	paddedArr := inputs.PadGrid(arr2d, ".", len(match))
 	sum := countWordOccurrences(paddedArr, match)
 	return sum
 }

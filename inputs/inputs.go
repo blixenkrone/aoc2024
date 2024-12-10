@@ -1,10 +1,16 @@
 package inputs
 
 import (
+	"fmt"
 	"io"
 	"strconv"
 	"strings"
 )
+
+// func MustUnicode[T ~int](i T) string {
+// 	r := rune(i)
+// 	return string(r)
+// }
 
 func Abs[T ~int](x T) T {
 	if x < 0 {
@@ -48,7 +54,27 @@ func PadGrid(grid [][]string, padChar string, n int) [][]string {
 	return grid
 }
 
-func Scan2DInput[T ~string](in io.Reader) [][]T {
+func ParseGrid(input string) [][]int {
+	// Split the input into lines
+	lines := strings.Split(strings.TrimSpace(input), "\n")
+	grid := make([][]int, len(lines))
+
+	for i, line := range lines {
+		// Split each line into individual characters
+		grid[i] = make([]int, len(line))
+		for j, char := range line {
+			// Convert each character to an integer
+			num, err := strconv.Atoi(string(char))
+			if err != nil {
+				panic(fmt.Sprintf("Invalid character in input: %s", string(char)))
+			}
+			grid[i][j] = num
+		}
+	}
+
+	return grid
+}
+func Scan2DInput[T ~string | ~int](in io.Reader) [][]T {
 	b, err := io.ReadAll(in)
 	if err != nil {
 		panic(err)
